@@ -544,7 +544,6 @@ public class CheckInForm extends javax.swing.JPanel {
         if (nhoso >= 0 && nhoso < soMax - 1) {
             nhoso += 50;
             checkInBLL.updateTableTop((DefaultTableModel) orderList.getModel(), nhoso);
-            System.out.println(nhoso);
             previous.setVisible(true);
         }
         if (nhoso > soMax - 2) {
@@ -558,7 +557,6 @@ public class CheckInForm extends javax.swing.JPanel {
             nhoso -= 50;
             checkInBLL.updateTableTop((DefaultTableModel) orderList.getModel(), nhoso);
             next.setVisible(true);
-            System.out.println(nhoso);
         }
         if (nhoso == 0) {
             previous.setVisible(false);
