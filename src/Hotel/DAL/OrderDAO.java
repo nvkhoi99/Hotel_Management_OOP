@@ -131,7 +131,7 @@ public class OrderDAO {
     public ResultSet checkEmptyRoomInOrder(int orderId) throws SQLException {
         PreparedStatement ps = conn.prepareStatement("SELECT chitietdatphong.maphong "
                 + "FROM chitietdatphong INNER JOIN phong ON chitietdatphong.maphong = phong.maphong "
-                + "WHERE madatphong = ? AND phong.maphong = 0");
+                + "WHERE madatphong = ? AND mahientai != 0");
         ps.setInt(1, orderId);
         ResultSet rs = ps.executeQuery();
 

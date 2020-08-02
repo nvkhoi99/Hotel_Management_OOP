@@ -266,8 +266,7 @@ public class RoomServiceForm extends javax.swing.JFrame {
         gridBagConstraints.gridy = 6;
         jDialog2.getContentPane().add(cancel, gridBagConstraints);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(990, 610));
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowFocusListener(new java.awt.event.WindowFocusListener() {
             public void windowGainedFocus(java.awt.event.WindowEvent evt) {
             }
@@ -283,14 +282,14 @@ public class RoomServiceForm extends javax.swing.JFrame {
         jpPhai.setRequestFocusEnabled(false);
         jpPhai.setLayout(new java.awt.BorderLayout(0, 5));
 
-        jpTren1.setLayout(new java.awt.GridLayout());
+        jpTren1.setLayout(new java.awt.GridLayout(1, 0));
 
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Hotel/GUI/Z_Icons/rsz_resort-la-gi.jpg"))); // NOI18N
         jpTren1.add(jLabel7);
 
         jpPhai.add(jpTren1, java.awt.BorderLayout.PAGE_START);
 
-        jpDuoi1.setLayout(new java.awt.GridLayout());
+        jpDuoi1.setLayout(new java.awt.GridLayout(1, 0));
 
         addDvbtn.setBackground(new java.awt.Color(255, 153, 153));
         addDvbtn.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
@@ -308,7 +307,7 @@ public class RoomServiceForm extends javax.swing.JFrame {
         jpGiua1.setLayout(new java.awt.BorderLayout(0, 10));
 
         jPanel10.setPreferredSize(new java.awt.Dimension(500, 200));
-        jPanel10.setLayout(new java.awt.GridLayout());
+        jPanel10.setLayout(new java.awt.GridLayout(1, 0));
 
         choosenServices.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -350,7 +349,7 @@ public class RoomServiceForm extends javax.swing.JFrame {
         jPanel4.setPreferredSize(new java.awt.Dimension(50, 268));
         jPanel4.setLayout(new java.awt.BorderLayout());
 
-        jPanel6.setLayout(new java.awt.GridLayout());
+        jPanel6.setLayout(new java.awt.GridLayout(1, 0));
 
         saveService.setBackground(new java.awt.Color(255, 153, 153));
         saveService.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
@@ -424,7 +423,7 @@ public class RoomServiceForm extends javax.swing.JFrame {
 
         jpTren.add(jPanel1, java.awt.BorderLayout.PAGE_END);
 
-        jPanel3.setLayout(new java.awt.GridLayout());
+        jPanel3.setLayout(new java.awt.GridLayout(1, 0));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Hotel/GUI/Z_Icons/rsz_5phoi-canh-khach-san-dep_30-1024x683.jpg"))); // NOI18N
         jPanel3.add(jLabel1);
@@ -433,7 +432,7 @@ public class RoomServiceForm extends javax.swing.JFrame {
 
         jpTrai.add(jpTren, java.awt.BorderLayout.PAGE_START);
 
-        jPanel9.setLayout(new java.awt.GridLayout());
+        jPanel9.setLayout(new java.awt.GridLayout(1, 0));
 
         serviceList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

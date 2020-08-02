@@ -599,10 +599,11 @@ public class OrderForm extends JPanel {
                 }
             }
             int orderId = orderBLL.addOrder(customer, ngaynhan1.getJFormattedTextField().getText(),
-                ngaytra1.getJFormattedTextField().getText(), orderRooms, nhancoc.isSelected() ? 1 : 0);
+                    ngaytra1.getJFormattedTextField().getText(), orderRooms, nhancoc.isSelected() ? 1 : 0);
             if (orderId > 0) {
                 JOptionPane.showMessageDialog(null, "Đơn #" + orderId + " đặt phòng thành công");
                 Rules.StateIsChanged = true;
+                checkOrder_new();
             } else {
                 JOptionPane.showMessageDialog(null, "Đặt phòng thất bại, đã xảy ra lỗi");
             }
