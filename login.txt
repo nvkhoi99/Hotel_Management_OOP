@@ -1,2 +1,2 @@
-root
-makodakenjin
+//type user here
+//type password here
