@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class DbConn {
 
-    public static final String MYSQL_HOTELMANAGEMENT = "jdbc:mysql://localhost:3306/hotel_oop"
+    public static final String MYSQL_HOTELMANAGEMENT = "jdbc:mysql://localhost:3306/hotel_project"
             + "?useUnicode=yes&characterEncoding=UTF-8";
     public static String USER;
     public static String PASS;

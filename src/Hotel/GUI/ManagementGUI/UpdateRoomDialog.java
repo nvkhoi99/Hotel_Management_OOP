@@ -1,6 +1,6 @@
 package Hotel.GUI.ManagementGUI;
 
-import Hotel.DTO.Room.Room;
+import Hotel.DTO.rooms.Room;
 import Hotel.BLL.ManagementBLL;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -19,7 +19,7 @@ public class UpdateRoomDialog extends javax.swing.JDialog {
         this.managementBLL = managementBLL;
         initComponents();
         this.currentRoom = room;
-        newName.setText(room.getTenphong());
+        newName.setText(room.getName());
         ArrayList<String> nameList = managementBLL.getNameTypeList();
         nameList.forEach((i) -> {
             newType.addItem(i);

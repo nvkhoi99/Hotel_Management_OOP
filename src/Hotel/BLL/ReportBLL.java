@@ -45,7 +45,7 @@ public class ReportBLL {
         try {
             comboBox.removeAllItems();
             comboBox.addItem("Tất cả");
-            ResultSet rs = ServiceDAO.getInstance().getDichvu();
+            ResultSet rs = ServiceDAO.getInstance().getService();
             while (rs.next()) {
                 comboBox.addItem(rs.getString("tendv"));
             }

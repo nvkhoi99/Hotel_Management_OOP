@@ -3,6 +3,8 @@ package Hotel.GUI.CheckInGUI;
 import Hotel.DTO.Customer;
 import Hotel.BLL.CheckInBLL;
 import Hotel.BLL.Rules;
+import Hotel.DTO.Booking;
+import Hotel.GUI.common.DataChangeListener;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -13,7 +15,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Admin
  */
-public class CheckInForm extends javax.swing.JPanel {
+public class CheckInForm extends javax.swing.JPanel implements DataChangeListener<Booking> {
 
     private final CheckInBLL checkInBLL = new CheckInBLL(this);
     private int nhoso = 0;
@@ -39,10 +41,10 @@ public class CheckInForm extends javax.swing.JPanel {
         }
     }
 
-    private void updateOrderTable() {
+    private void updateBookingTable() {
         //checkInBLL.updateTable((DefaultTableModel) orderList.getModel());
         checkInBLL.updateTableTop((DefaultTableModel) orderList.getModel(), 0);
-        checkInBLL.updateTable((DefaultTableModel) orderJTable.getModel());
+//        checkInBLL.updateTable((DefaultTableModel) orderJTable.getModel());
         updateUI();
     }
 
@@ -81,8 +83,8 @@ public class CheckInForm extends javax.swing.JPanel {
         dsphongdat = new javax.swing.JTable();
         cmnd = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         buttons = new javax.swing.JPanel();
+        btnEditBookingRoom = new javax.swing.JButton();
         huyphong = new javax.swing.JButton();
         nhancoc = new javax.swing.JButton();
         nhanphong = new javax.swing.JButton();
@@ -416,16 +418,11 @@ public class CheckInForm extends javax.swing.JPanel {
 
         jPanel8.add(jPanel1, java.awt.BorderLayout.CENTER);
 
-        jLabel3.setFont(new java.awt.Font("Arial", 3, 18)); // NOI18N
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Hotel/GUI/Z_Icons/1464860040-img20160416013819971-xahoi.com.vn-1465003981.jpg"))); // NOI18N
-        jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
-        jLabel3.setOpaque(true);
-        jLabel3.setPreferredSize(new java.awt.Dimension(200, 100));
-        jPanel8.add(jLabel3, java.awt.BorderLayout.PAGE_START);
+        buttons.setPreferredSize(new java.awt.Dimension(300, 120));
+        buttons.setLayout(new java.awt.GridLayout(0, 1));
 
-        buttons.setPreferredSize(new java.awt.Dimension(300, 50));
-        buttons.setLayout(new java.awt.GridLayout(1, 0));
+        btnEditBookingRoom.setText("Sửa thông tin");
+        buttons.add(btnEditBookingRoom);
 
         huyphong.setBackground(new java.awt.Color(255, 153, 153));
         huyphong.setForeground(new java.awt.Color(255, 0, 51));
@@ -467,7 +464,7 @@ public class CheckInForm extends javax.swing.JPanel {
     private void huyphongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_huyphongActionPerformed
         if (orderList.getSelectedRow() >= 0) {
             checkInBLL.cancelOrder((int) orderList.getValueAt(orderList.getSelectedRow(), 0));
-            updateOrderTable();
+            updateBookingTable();
         }
     }//GEN-LAST:event_huyphongActionPerformed
 
@@ -476,9 +473,9 @@ public class CheckInForm extends javax.swing.JPanel {
         int orderId = (int) orderList.getValueAt(select, 0);
         if (orderId >= 0) {
             Customer customer = checkInBLL.getCustomerByOrderId(orderId);
-            hotenkh.setText(customer.getHotenkh());
-            cmnd.setText(customer.getCmnd());
-            sdt.setText(customer.getSdt());
+            hotenkh.setText(customer.getFullname());
+            cmnd.setText(customer.getIdentity());
+            sdt.setText(customer.getPhone());
             ngaynhan.setText(orderList.getValueAt(select, 2).toString());
             ngaytra.setText(orderList.getValueAt(select, 3).toString());
             tongcoc.setText(String.valueOf(orderList.getValueAt(select, 4)));
@@ -497,15 +494,15 @@ public class CheckInForm extends javax.swing.JPanel {
     private void nhancocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nhancocActionPerformed
         if (orderList.getSelectedRow() >= 0) {
             checkInBLL.depositOrder((int) orderList.getValueAt(orderList.getSelectedRow(), 0));
-            updateOrderTable();
+            updateBookingTable();
         }
     }//GEN-LAST:event_nhancocActionPerformed
 
     private void nhanphongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nhanphongActionPerformed
-        if (orderList.getSelectedRow() >= 0) {
+                if (orderList.getSelectedRow() >= 0) {
             if (checkInBLL.checkInOrder((int) orderList.getValueAt(orderList.getSelectedRow(), 0))) {
                 JOptionPane.showMessageDialog(null, "Nhận phòng thành công");
-                updateOrderTable();
+                updateBookingTable();
                 Rules.StateIsChanged = true;
             }
         }
@@ -513,7 +510,7 @@ public class CheckInForm extends javax.swing.JPanel {
 
     private void formHierarchyChanged(java.awt.event.HierarchyEvent evt) {//GEN-FIRST:event_formHierarchyChanged
         if (this.isShowing()) {
-            updateOrderTable();
+            updateBookingTable();
         }
     }//GEN-LAST:event_formHierarchyChanged
 
@@ -568,6 +565,7 @@ public class CheckInForm extends javax.swing.JPanel {
     }//GEN-LAST:event_txtSearchActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnEditBookingRoom;
     private javax.swing.JPanel buttons;
     private javax.swing.JTextField cmnd;
     private javax.swing.JTable dsphongdat;
@@ -576,7 +574,6 @@ public class CheckInForm extends javax.swing.JPanel {
     private javax.swing.JButton huyphong;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -604,4 +601,9 @@ public class CheckInForm extends javax.swing.JPanel {
     private javax.swing.JTextField trangthai;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void onDataChanged(Booking booking) {
+
+    }
 }

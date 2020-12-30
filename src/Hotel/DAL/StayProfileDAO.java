@@ -39,7 +39,7 @@ public class StayProfileDAO {
         int stayId = 0;
         PreparedStatement ps = conn.prepareStatement("INSERT INTO hosothuephong "
                 + "(madatphong, thucnhan) VALUES (?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
-        ps.setInt(1, stayProfile.getDondatphong().getMadatphong());
+        ps.setInt(1, stayProfile.getDondatphong().getId());
         ps.setTimestamp(2, stayProfile.getThucnhan());
         ps.executeUpdate();
         ResultSet rs = ps.getGeneratedKeys();
@@ -47,7 +47,7 @@ public class StayProfileDAO {
             stayId = rs.getInt(1);
         }
         ps.close();
-        int updatedCount = setStayedRooms(stayId, stayProfile.getDondatphong().getMadatphong());
+        int updatedCount = setStayedRooms(stayId, stayProfile.getDondatphong().getId());
 
         return updatedCount;
     }
@@ -76,7 +76,7 @@ public class StayProfileDAO {
     }
 
     public ResultSet getProfileById(int stayId) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("SELECT * FROM hosothuephong WHERE mathuephong = ?");
+        PreparedStatement ps = conn.prepareStatement("SELECT * FROM booking WHERE bid = ?");
         ps.setInt(1, stayId);
         ResultSet rs = ps.executeQuery();
 

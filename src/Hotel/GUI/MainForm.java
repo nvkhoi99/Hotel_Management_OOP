@@ -1,12 +1,15 @@
 package Hotel.GUI;
 
+import Hotel.DAL.pool.ConnectionPool;
+import Hotel.GUI.BookingGUI.BookingForm;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.sql.SQLException;
 import javax.swing.JLabel;
 import Hotel.GUI.CheckInGUI.CheckInForm;
 import Hotel.GUI.CheckOutGUI.CheckOutForm;
+import Hotel.GUI.CheckOutGUI.CheckOutForm_1;
 import Hotel.GUI.ManagementGUI.ManagementForm;
-import Hotel.GUI.OrderGUI.OrderForm;
 import Hotel.GUI.ServiceGUI.ServiceForm;
 import Hotel.GUI.ReportGUI.ReportForm_1;
 
@@ -20,8 +23,8 @@ public class MainForm extends javax.swing.JFrame {
     private final Color CHOOSEN_COLOR = new Color(153, 255, 255);
     private JLabel currentChoosen;
 
-    private CardLayout card;
-    private CheckOutForm checkOutForm = new CheckOutForm();
+    private final CardLayout card;
+    private final CheckOutForm_1 checkOutForm = new CheckOutForm_1();
 
     public MainForm() {
         initComponents();
@@ -35,7 +38,7 @@ public class MainForm extends javax.swing.JFrame {
     private void initForms() {
         main.add(new ManagementForm(), quanlyphong.getText());
 
-        main.add(new OrderForm(), datphong.getText());
+        main.add(new BookingForm(), datphong.getText());
 
         main.add(new CheckInForm(), nhanphong.getText());
 
@@ -49,7 +52,7 @@ public class MainForm extends javax.swing.JFrame {
     public void goToProfile(int stayId) {
         setChoosenColor(traphong);
         card.show(main, traphong.getText());
-        checkOutForm.goToProfile(stayId);
+        checkOutForm.searchProfile(stayId);
     }
 
     @SuppressWarnings("unchecked")
@@ -247,7 +250,14 @@ public class MainForm extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(MainForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        // Configure connection to mysql
+        try {
+            ConnectionPool.configure("jdbc:mysql://localhost:3306/hotel_project"
+                                        + "?useUnicode=yes&characterEncoding=UTF-8",
+                                        "root", "makodakenjin");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {

@@ -1,7 +1,7 @@
 package Hotel.DAL;
 
-import Hotel.DTO.Order;
-import Hotel.DTO.Room.RoomForOrdering;
+import Hotel.DTO.Booking;
+import Hotel.DTO.rooms.RoomForOrdering;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,18 +29,18 @@ public class OrderDAO {
         return instance;
     }
 
-    public int addOrder(Order order) throws SQLException {
+    public int addOrder(Booking booking) throws SQLException {
         conn.setAutoCommit(false);
         int orderId = 0;
         PreparedStatement ps = conn.prepareStatement("INSERT INTO dondatphong "
                 + "(makh, ngaydat, ngaynhan, ngaytra, tongcoc, trangthai) "
                 + "VALUES (?, ?, ?, ?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
-        ps.setInt(1, order.getMakh());
-        ps.setTimestamp(2, order.getNgaydat());
-        ps.setTimestamp(3, order.getNgaynhan());
-        ps.setTimestamp(4, order.getNgaytra());
-        ps.setInt(5, order.getTongcoc());
-        ps.setInt(6, order.getTrangthai());
+        ps.setInt(1, booking.getCustomerId());
+        ps.setTimestamp(2, booking.getBookingTime());
+        ps.setTimestamp(3, booking.getCheckInTime());
+        ps.setTimestamp(4, booking.getCheckOutTime());
+        ps.setInt(5, booking.getDeposit());
+        ps.setInt(6, booking.getStatus());
         ps.executeUpdate();
         ResultSet rs = ps.getGeneratedKeys();
         rs.next();
@@ -57,8 +57,8 @@ public class OrderDAO {
                 + "VALUES (?, ?, ?)");
         for (RoomForOrdering room : rooms) {
             ps.setInt(1, orderId);
-            ps.setInt(2, room.getMaphong());
-            ps.setInt(3, room.getDongiadat());
+            ps.setInt(2, room.getId());
+            ps.setInt(3, room.getPrice());
             ps.addBatch();
         }
         ps.executeBatch();
@@ -87,8 +87,8 @@ public class OrderDAO {
     }
 
     public void changeStateOrder(int orderId, int state) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("UPDATE dondatphong "
-                + "SET trangthai = ? WHERE madatphong = ?");
+        PreparedStatement ps = conn.prepareStatement("UPDATE booking "
+                + "SET bstatus = ? WHERE bid = ?");
         ps.setInt(1, state);
         ps.setInt(2, orderId);
         ps.executeUpdate();
@@ -109,10 +109,10 @@ public class OrderDAO {
     }
 
     public ResultSet getRoomInOrder(int orderId) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("SELECT tenphong, tenloaiphong, dongiadat "
-                + "FROM chitietdatphong INNER JOIN phong on chitietdatphong.maphong = phong.maphong "
-                + "inner join loaiphong on phong.maloaiphong = loaiphong.maloaiphong "
-                + "WHERE madatphong = ?");
+        PreparedStatement ps = conn.prepareStatement("SELECT rname, tname, rprice "
+                + "FROM booking_room INNER JOIN room on booking_room.rid = room.rid "
+                + "inner join room_type on room.tid = room_type.tid "
+                + "WHERE bid = ?");
         ps.setInt(1, orderId);
         ResultSet rs = ps.executeQuery();
 
@@ -139,8 +139,8 @@ public class OrderDAO {
     }
 
     public ResultSet getOrderTop(int topCount) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("SELECT * FROM dondatphong "
-                + "ORDER BY trangthai ASC, madatphong DESC "
+        PreparedStatement ps = conn.prepareStatement("SELECT * FROM booking "
+                + "ORDER BY bstatus ASC, bid DESC "
                 + "LIMIT 50 OFFSET ? ");
         ps.setInt(1, topCount);
         ResultSet rs = ps.executeQuery();
@@ -149,7 +149,7 @@ public class OrderDAO {
     }
 
     public ResultSet getCountOrder() throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("SELECT COUNT(madatphong) AS soluong FROM dondatphong");
+        PreparedStatement ps = conn.prepareStatement("SELECT COUNT(bid) AS soluong FROM booking");
         ResultSet rs = ps.executeQuery();
 
         return rs;

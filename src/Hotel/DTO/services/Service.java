@@ -3,25 +3,35 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Hotel.DTO;
+package Hotel.DTO.services;
 
 /**
  *
- * @author Yue
+ * @author Admin
  */
-public class RoomType {
+import java.sql.Timestamp;
+
+public class Service {
 
     private int id;
     private String name;
+    private String unit;
     private int price;
 
-    public RoomType() {
+    public Service() {
 
     }
 
-    public RoomType(int id, String name, int price) {
+    public Service(String name, String unit, int price) {
+        this.name = name;
+        this.unit = unit;
+        this.price = price;
+    }
+
+    public Service(int id, String name, String unit, int price) {
         this.id = id;
         this.name = name;
+        this.unit = unit;
         this.price = price;
     }
 
@@ -39,6 +49,14 @@ public class RoomType {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public int getPrice() {

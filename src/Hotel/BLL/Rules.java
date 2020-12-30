@@ -25,5 +25,4 @@ public class Rules {
 
     public static final int SURCHARGE_EARLY_PERCENT = 30;
     public static final int SURCHARGE_LATELY_PERCENT = 30;
-
 }

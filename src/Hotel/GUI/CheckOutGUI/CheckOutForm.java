@@ -512,17 +512,17 @@ public class CheckOutForm extends JPanel {
             CheckInBLL checkInBLL = new CheckInBLL(null);
 
             stayProfile = checkOutBLL.getProfileById(stayId);
-            currentCustomer = checkInBLL.getCustomerByOrderId(stayProfile.getDondatphong().getMadatphong());
-            hotenkh.setText(currentCustomer.getHotenkh());
-            sdt.setText(currentCustomer.getSdt());
-            ngaynhan.setText(stayProfile.getDondatphong().getNgaynhan().toString());
-            ngaytra.setText(stayProfile.getDondatphong().getNgaytra().toString());
+            currentCustomer = checkInBLL.getCustomerByOrderId(stayProfile.getDondatphong().getId());
+            hotenkh.setText(currentCustomer.getFullname());
+            sdt.setText(currentCustomer.getPhone());
+            ngaynhan.setText(stayProfile.getDondatphong().getCheckInTime().toString());
+            ngaytra.setText(stayProfile.getDondatphong().getCheckOutTime().toString());
             thucnhan.setText(stayProfile.getThucnhan().toString());
             thuctra.setText(String.valueOf(stayProfile.getThuctra()));
-            tongcoc.setText(String.valueOf(new DecimalFormat("#,##0").format(stayProfile.getDondatphong().getTongcoc())));
+            tongcoc.setText(String.valueOf(new DecimalFormat("#,##0").format(stayProfile.getDondatphong().getDeposit())));
             tongthanhtoan.setText(stayProfile.getThuctra() == null ? "Chưa thanh toán"
                     : new DecimalFormat("#,##0 vnd").format(stayProfile.getTongthanhtoan()));
-            checkInBLL.updateOrderedRoomTable(stayProfile.getDondatphong().getMadatphong(), (DefaultTableModel) stayRoomList.getModel());
+            checkInBLL.updateOrderedRoomTable(stayProfile.getDondatphong().getId(), (DefaultTableModel) stayRoomList.getModel());
 
             checkOutAndPay.setVisible((stayProfile.getThuctra() == null));
 

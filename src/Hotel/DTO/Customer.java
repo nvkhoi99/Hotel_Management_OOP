@@ -11,72 +11,72 @@ package Hotel.DTO;
  */
 public class Customer {
 
-    private int makh;
-    private String hotenkh;
-    private boolean gioitinh;
-    private String cmnd;
-    private String diachi;
-    private String sdt;
+    private int id;
+    private String fullname;
+    private boolean gender;
+    private String identity;
+    private String address;
+    private String phone;
 
     public Customer() {
 
     }
 
-    public Customer(int makh, String hotenkh, boolean gioitinh, String cmnd, String diachi, String sdt) {
-        this.makh = makh;
-        this.hotenkh = hotenkh;
-        this.gioitinh = gioitinh;
-        this.cmnd = cmnd;
-        this.diachi = diachi;
-        this.sdt = sdt;
+    public Customer(int id, String fullname, boolean gender, String identity, String address, String phone) {
+        this.id = id;
+        this.fullname = fullname;
+        this.gender = gender;
+        this.identity = identity;
+        this.address = address;
+        this.phone = phone;
     }
 
-    public int getMakh() {
-        return makh;
+    public int getId() {
+        return id;
     }
 
-    public void setMakh(int makh) {
-        this.makh = makh;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getHotenkh() {
-        return hotenkh;
+    public String getFullname() {
+        return fullname;
     }
 
-    public void setHotenkh(String hotenkh) {
-        this.hotenkh = hotenkh;
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 
-    public boolean isGioitinh() {
-        return gioitinh;
+    public boolean isGender() {
+        return gender;
     }
 
-    public void setGioitinh(boolean gioitinh) {
-        this.gioitinh = gioitinh;
+    public void setGender(boolean gender) {
+        this.gender = gender;
     }
 
-    public String getCmnd() {
-        return cmnd;
+    public String getIdentity() {
+        return identity;
     }
 
-    public void setCmnd(String cmnd) {
-        this.cmnd = cmnd;
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 
-    public String getDiachi() {
-        return diachi;
+    public String getAddress() {
+        return address;
     }
 
-    public void setDiachi(String diachi) {
-        this.diachi = diachi;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public String getSdt() {
-        return sdt;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setSdt(String sdt) {
-        this.sdt = sdt;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
 }

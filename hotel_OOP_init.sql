@@ -44,13 +44,13 @@ INSERT INTO `chitietdatphong` VALUES (16,1,499000),(17,2,499000),(18,4,499000),(
 UNLOCK TABLES;
 
 --
--- Table structure for table `dichvu`
+-- Table structure for table `service`
 --
 
-DROP TABLE IF EXISTS `dichvu`;
+DROP TABLE IF EXISTS `service`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `dichvu` (
+CREATE TABLE `service` (
   `madv` int(5) unsigned zerofill NOT NULL AUTO_INCREMENT,
   `tendv` varchar(45) DEFAULT NULL,
   `dvtinh` char(15) DEFAULT NULL,
@@ -60,23 +60,23 @@ CREATE TABLE `dichvu` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `dichvu`
+-- Dumping data for table `service`
 --
 
-LOCK TABLES `dichvu` WRITE;
-/*!40000 ALTER TABLE `dichvu` DISABLE KEYS */;
-INSERT INTO `dichvu` VALUES (00001,'Giặt là','Lượt',100000),(00004,'Bữa sáng - Thường','Suất',30000),(00005,'Bữa sáng - Cao cấp','Suất',50000);
-/*!40000 ALTER TABLE `dichvu` ENABLE KEYS */;
+LOCK TABLES `service` WRITE;
+/*!40000 ALTER TABLE `service` DISABLE KEYS */;
+INSERT INTO `service` VALUES (00001,'Giặt là','Lượt',100000),(00004,'Bữa sáng - Thường','Suất',30000),(00005,'Bữa sáng - Cao cấp','Suất',50000);
+/*!40000 ALTER TABLE `service` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `dichvuphong`
+-- Table structure for table `roomService`
 --
 
-DROP TABLE IF EXISTS `dichvuphong`;
+DROP TABLE IF EXISTS `roomService`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `dichvuphong` (
+CREATE TABLE `roomService` (
   `mathuephong` int(10) unsigned zerofill NOT NULL,
   `madv` int(5) unsigned zerofill NOT NULL,
   `dongia` int unsigned DEFAULT NULL,
@@ -85,19 +85,19 @@ CREATE TABLE `dichvuphong` (
   `soluong` int DEFAULT NULL,
   PRIMARY KEY (`mathuephong`,`madv`,`ngaydung`),
   KEY `fk_dichvuphong_dichvu1_idx` (`madv`),
-  CONSTRAINT `fk_dichvuphong_dichvu` FOREIGN KEY (`madv`) REFERENCES `dichvu` (`madv`) ON UPDATE CASCADE,
+  CONSTRAINT `fk_dichvuphong_dichvu` FOREIGN KEY (`madv`) REFERENCES `service` (`madv`) ON UPDATE CASCADE,
   CONSTRAINT `fk_dichvuphong_hosothuephong1` FOREIGN KEY (`mathuephong`) REFERENCES `hosothuephong` (`mathuephong`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `dichvuphong`
+-- Dumping data for table `roomService`
 --
 
-LOCK TABLES `dichvuphong` WRITE;
-/*!40000 ALTER TABLE `dichvuphong` DISABLE KEYS */;
-INSERT INTO `dichvuphong` VALUES (0000000014,00004,30000,'2020-06-07 22:39:00',1,1),(0000000014,00004,30000,'2020-06-18 13:08:31',1,1),(0000000014,00005,50000,'2020-06-03 17:56:14',1,1),(0000000014,00005,50000,'2020-06-07 22:39:00',1,1),(0000000014,00005,50000,'2020-06-18 13:08:31',1,2),(0000000015,00001,100000,'2020-06-18 14:46:40',5,2),(0000000015,00004,30000,'2020-06-18 14:46:40',5,1),(0000000016,00001,100000,'2020-07-05 21:13:51',3,1),(0000000016,00004,30000,'2020-07-05 21:13:51',3,2),(0000000016,00005,50000,'2020-07-05 21:13:51',3,2);
-/*!40000 ALTER TABLE `dichvuphong` ENABLE KEYS */;
+LOCK TABLES `roomService` WRITE;
+/*!40000 ALTER TABLE `roomService` DISABLE KEYS */;
+INSERT INTO `roomService` VALUES (0000000014,00004,30000,'2020-06-07 22:39:00',1,1),(0000000014,00004,30000,'2020-06-18 13:08:31',1,1),(0000000014,00005,50000,'2020-06-03 17:56:14',1,1),(0000000014,00005,50000,'2020-06-07 22:39:00',1,1),(0000000014,00005,50000,'2020-06-18 13:08:31',1,2),(0000000015,00001,100000,'2020-06-18 14:46:40',5,2),(0000000015,00004,30000,'2020-06-18 14:46:40',5,1),(0000000016,00001,100000,'2020-07-05 21:13:51',3,1),(0000000016,00004,30000,'2020-07-05 21:13:51',3,2),(0000000016,00005,50000,'2020-07-05 21:13:51',3,2);
+/*!40000 ALTER TABLE `roomService` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

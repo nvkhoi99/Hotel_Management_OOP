@@ -6,6 +6,10 @@
 package Hotel.GUI.ServiceGUI;
 
 import Hotel.BLL.ServiceBLL;
+import Hotel.DTO.Booking;
+import Hotel.DTO.services.RoomService;
+import Hotel.DTO.services.Service;
+
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
@@ -13,6 +17,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -20,15 +26,15 @@ import javax.swing.table.TableRowSorter;
  */
 public class RoomServiceForm extends javax.swing.JFrame {
 
-    private final int maphong$;
-    private final int mathuephong$;
+    private final int bookingId;
+    private final int roomId;
     private final ServiceBLL serviceBLL = new ServiceBLL();
+    private List<Service> services;
 
-    public RoomServiceForm(int maphong, int mathuephong) {
-        maphong$ = maphong;
-        mathuephong$ = mathuephong;
+    public RoomServiceForm(int bookingId, int roomId) {
+        this.bookingId = bookingId;
+        this.roomId = roomId;
         initComponents();
-        tablelichsusudung.setEnabled(false);
         AddServices();
         adddichvuphong();
         TableRowSorter<TableModel> rowSorter = new TableRowSorter<>(serviceList.getModel());
@@ -69,11 +75,21 @@ public class RoomServiceForm extends javax.swing.JFrame {
     }
 
     private void AddServices() {
-        serviceBLL.initServiceList((DefaultTableModel) serviceList.getModel());
+        services = serviceBLL.getAllService();
+        DefaultTableModel serviceModel = (DefaultTableModel) serviceList.getModel();
+        for (Service service : services) {
+            serviceModel.addRow(new Object[]{
+                service.getId(),
+                service.getName(),
+                service.getUnit(),
+                service.getPrice()
+            });
+        }
     }
 
     private void adddichvuphong() {
-        serviceBLL.initRoomServiceList(mathuephong$, maphong$, (DefaultTableModel) tablelichsusudung.getModel());
+        DefaultTableModel roomServiceModel = (DefaultTableModel) tablelichsusudung.getModel();
+        serviceBLL.initRoomServiceList(bookingId, roomId, roomServiceModel);
     }
 
     @SuppressWarnings("unchecked")
@@ -371,20 +387,15 @@ public class RoomServiceForm extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Tên dịch vụ", "Ngày dùng", "Đơn giá", "Số lượng"
+                "Mã dùng", "Tên dịch vụ", "Ngày dùng", "Đơn giá", "Số lượng"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
-            }
-        });
-        tablelichsusudung.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablelichsusudungMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tablelichsusudung);
@@ -471,7 +482,7 @@ public class RoomServiceForm extends javax.swing.JFrame {
 
     private void addDvbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDvbtnActionPerformed
         if (choosenServices.getRowCount() > 0) {
-            if (serviceBLL.addRoomServices(mathuephong$, maphong$, (DefaultTableModel) choosenServices.getModel())) {
+            if (serviceBLL.addRoomServices(bookingId, roomId, (DefaultTableModel) choosenServices.getModel())) {
                 JOptionPane.showMessageDialog(null, "Thêm dịch vụ thành công");
                 adddichvuphong();
             } else {
@@ -493,42 +504,17 @@ public class RoomServiceForm extends javax.swing.JFrame {
     }//GEN-LAST:event_choosenServicesMouseClicked
 
     private void saveServiceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveServiceActionPerformed
-        tablelichsusudung.setEnabled(true);
-        tablelichsusudung.requestFocus();
-    }//GEN-LAST:event_saveServiceActionPerformed
-
-    private void tablelichsusudungMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablelichsusudungMouseClicked
-        //int x = JOptionPane.showConfirmDialog(null, "Sửa ?", "Chắc ko? ", JOptionPane.OK_CANCEL_OPTION);
-        //if (x == 0) {
-        //   System.out.print("XXXXX");
-        // },String tendv , String dongia , String ngaydung ,String soluong , int mathuephong , int maphong
-        /*UpdateServicebtn aaaaaazs;
-        aaaaaazs = new UpdateServicebtn(null, true,
-            tablelichsusudung.getValueAt(tablelichsusudung.getSelectedRow(), 0).toString(),
-            tablelichsusudung.getValueAt(tablelichsusudung.getSelectedRow(), 1).toString(),
-            tablelichsusudung.getValueAt(tablelichsusudung.getSelectedRow(), 2).toString(),
-            tablelichsusudung.getValueAt(tablelichsusudung.getSelectedRow(), 3).toString(),
-            mathuephong$, maphong$);
-        aaaaaazs.setVisible(true);
-        aaaaaazs.resize(500, 400);*/
-        //        if (evt.getClickCount() == 2) {
-        if (tablelichsusudung.isEnabled()) {
-            txtTendv.setText(tablelichsusudung.getValueAt(tablelichsusudung.getSelectedRow(), 0).toString());
-            txtDongia.setText(tablelichsusudung.getValueAt(tablelichsusudung.getSelectedRow(), 2).toString());
-            txtNgaysudung.setText(tablelichsusudung.getValueAt(tablelichsusudung.getSelectedRow(), 1).toString());
-            txtSoluong.setText(tablelichsusudung.getValueAt(tablelichsusudung.getSelectedRow(), 3).toString());
+        if (tablelichsusudung.getSelectedRow() >= 0) {
+            txtTendv.setText(tablelichsusudung.getValueAt(tablelichsusudung.getSelectedRow(), 1).toString());
+            txtDongia.setText(tablelichsusudung.getValueAt(tablelichsusudung.getSelectedRow(), 3).toString());
+            txtNgaysudung.setText(tablelichsusudung.getValueAt(tablelichsusudung.getSelectedRow(), 2).toString());
+            txtSoluong.setText(tablelichsusudung.getValueAt(tablelichsusudung.getSelectedRow(), 4).toString());
             jDialog2.setLocationRelativeTo(null);
             jDialog2.setVisible(true);
             jDialog2.setFocusable(true);
             jDialog2.setAutoRequestFocus(true);
         }
-        //        }
-        /* Point p = MouseInfo.getPointerInfo().getLocation();
-        int x = p.x;
-        int y = p.y;
-        jDialog2.setLocation(x, y + 30);
-        jDialog2.setVisible(true);*/
-    }//GEN-LAST:event_tablelichsusudungMouseClicked
+    }//GEN-LAST:event_saveServiceActionPerformed
 
     private void serviceListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_serviceListMouseClicked
         if (choosenServices.getRowCount() > 0) {
@@ -569,13 +555,13 @@ public class RoomServiceForm extends javax.swing.JFrame {
     }//GEN-LAST:event_serviceListMouseClicked
 
     private void delbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delbtnActionPerformed
-        if (serviceBLL.deleteRoomService(mathuephong$, txtTendv.getText(), txtNgaysudung.getText())) {
+        if (serviceBLL.deleteRoomService((Integer) tablelichsusudung.getValueAt(tablelichsusudung.getSelectedRow(), 0))) {
             JOptionPane.showMessageDialog(null, "Đã xóa dịch vụ");
             adddichvuphong();
-            jDialog2.hide();
         } else {
             JOptionPane.showMessageDialog(null, "Xóa thất bại, đã có lỗi xảy ra");
         }
+        jDialog2.setVisible(false);
     }//GEN-LAST:event_delbtnActionPerformed
 
     private void updatebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updatebtnActionPerformed
@@ -585,7 +571,7 @@ public class RoomServiceForm extends javax.swing.JFrame {
     }//GEN-LAST:event_updatebtnActionPerformed
 
     private void savebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savebtnActionPerformed
-        if (serviceBLL.updateRoomService(mathuephong$, txtTendv.getText(), txtSoluong.getText(), txtNgaysudung.getText())) {
+        if (serviceBLL.updateRoomService(bookingId, txtTendv.getText(), txtSoluong.getText(), txtNgaysudung.getText())) {
             jDialog2.setAlwaysOnTop(false);
             jDialog2.setVisible(false);
             JOptionPane.showMessageDialog(null, "Đã sửa dịch vụ");

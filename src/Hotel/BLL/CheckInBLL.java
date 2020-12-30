@@ -6,18 +6,16 @@
 package Hotel.BLL;
 
 import Hotel.BLL.HotelError.ErrorCode;
-import Hotel.DAL.StayProfileDAO;
+import Hotel.DAL.*;
 import Hotel.DTO.Customer;
-import Hotel.DTO.Order;
+import Hotel.DTO.Booking;
 import Hotel.DTO.StayProfile;
-import Hotel.DAL.CustomerDAO;
-import Hotel.DAL.DbConn;
-import Hotel.DAL.OrderDAO;
 import Hotel.GUI.CheckInGUI.CheckInForm;
 import java.sql.Timestamp;
 import javax.swing.table.DefaultTableModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -31,6 +29,8 @@ public class CheckInBLL {
     private final CheckInForm checkInForm;
     private final OrderDAO orderDAO = OrderDAO.getInstance();
     private int pos = 0;
+
+    private final BookingDao bookingDao = new BookingDao();
 
     public CheckInBLL(CheckInForm checkInForm) {
         this.checkInForm = checkInForm;
@@ -83,58 +83,44 @@ public class CheckInBLL {
         }
     }
 
-    public void depositOrder(int orderId) {
-        int check = JOptionPane.showConfirmDialog(null, "Xác nhận đặt cọc?", "Xác nhận", JOptionPane.OK_CANCEL_OPTION);
+    public void depositOrder(int bookingId) {
+        int check = JOptionPane.showConfirmDialog(null, "Xác nhận đặt cọc?",
+                "Xác nhận", JOptionPane.OK_CANCEL_OPTION);
         if (check == JOptionPane.YES_OPTION) {
             try {
-                orderDAO.changeStateOrder(orderId, Rules.DEPOSITED);
+                bookingDao.depositBooking(bookingId);
                 JOptionPane.showMessageDialog(null, "Nhận cọc thành công");
             } catch (SQLException ex) {
-                Logger.getLogger(CheckInBLL.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, ex.getMessage());
             }
         }
     }
 
-    public boolean checkInOrder(int orderId) {
+    public boolean checkInOrder(int bookingId) {
         int check = JOptionPane.showConfirmDialog(null, "Xác nhận nhận phòng?", "Xác nhận", JOptionPane.OK_CANCEL_OPTION);
         if (check == JOptionPane.YES_OPTION) {
             boolean success = true;
             try {
-                ResultSet rs = orderDAO.checkEmptyRoomInOrder(orderId);
-                if (rs.next()) {
-                    rs.getStatement().close();
-                    throw new HotelError(ErrorCode.STILL_CUSTOMER);
-                }
-                rs.getStatement().close();
-                try {
-                    DbConn.getConnection().setAutoCommit(false);
-
-                    orderDAO.changeStateOrder(orderId, Rules.CHECKED_IN);
-                    StayProfile stayProfile = new StayProfile();
-                    stayProfile.setDondatphong(new Order(orderId));
-                    stayProfile.setThucnhan(new Timestamp(System.currentTimeMillis()));
-                    if (StayProfileDAO.getInstance().addStayProfile(stayProfile) == 0) {
-                        throw new HotelError(ErrorCode.STAY_FAILED);
+                int surchargePercent = 0;
+                int hour = Calendar.getInstance().getTime().getHours();
+                if (hour >= Rules.MAX_EARLY_CHECK_IN_HOUR
+                        && hour < Rules.STANDARD_CHECK_IN_HOUR) {
+                    int surchargeCheck = JOptionPane.showConfirmDialog(null, "Tính phí nhận sớm?",
+                            "Nhận sớm", JOptionPane.YES_NO_CANCEL_OPTION);
+                    switch (surchargeCheck) {
+                        case JOptionPane.YES_OPTION:
+                            surchargePercent = Rules.SURCHARGE_EARLY_PERCENT;
+                            break;
+                        case JOptionPane.NO_OPTION:
+                            break;
+                        default:
+                            return false;
                     }
-
-                    DbConn.getConnection().commit();
-                } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(null, ex.getMessage());
-                    Logger.getLogger(CheckInBLL.class.getName()).log(Level.SEVERE, null, ex);
-                    DbConn.getConnection().rollback();
-                    success = false;
-                } catch (HotelError ex) {
-                    ex.notifyError();
-                    return false;
-                } finally {
-                    DbConn.getConnection().setAutoCommit(true);
                 }
+                bookingDao.checkInBooking(bookingId, surchargePercent);
             } catch (SQLException ex) {
-                Logger.getLogger(CheckInBLL.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            } catch (HotelError ex) {
-                ex.notifyError();
-                return false;
+                JOptionPane.showMessageDialog(null, ex.getMessage());
+                success = false;
             }
             return success;
         } else {
@@ -147,10 +133,10 @@ public class CheckInBLL {
         try {
             ResultSet rs = CustomerDAO.getInstance().getCustomerByOrderId(orderId);
             if (rs.next()) {
-                customer.setMakh(rs.getInt("makh"));
-                customer.setHotenkh(rs.getString("hotenkh"));
-                customer.setCmnd(rs.getString("cmnd"));
-                customer.setSdt(rs.getString("sdt"));
+                customer.setId(rs.getInt("cid"));
+                customer.setFullname(rs.getString("cname"));
+                customer.setIdentity(rs.getString("cidentity"));
+                customer.setPhone(rs.getString("cphone"));
             }
         } catch (SQLException ex) {
             Logger.getLogger(OrderDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -167,9 +153,9 @@ public class CheckInBLL {
             ResultSet rs = orderDAO.getRoomInOrder(orderId);
             while (rs.next()) {
                 orderRoomModel.addRow(new Object[]{
-                    rs.getString("tenphong"),
-                    rs.getString("tenloaiphong"),
-                    rs.getInt("dongiadat")
+                    rs.getString("rname"),
+                    rs.getString("tname"),
+                    rs.getInt("rprice")
                 });
             }
             rs.getStatement().close();
@@ -184,12 +170,12 @@ public class CheckInBLL {
             ResultSet rs = orderDAO.getOrderTop(topCount);
             while (rs.next()) {
                 Object[] col = new Object[6];
-                col[0] = rs.getInt("madatphong");
-                col[1] = rs.getTimestamp("ngaydat");
-                col[2] = rs.getTimestamp("ngaynhan");
-                col[3] = rs.getTimestamp("ngaytra");
-                col[4] = rs.getInt("tongcoc");
-                switch (rs.getInt("trangthai")) {
+                col[0] = rs.getInt("bid");
+                col[1] = rs.getTimestamp("btime");
+                col[2] = rs.getTimestamp("check_in");
+                col[3] = rs.getTimestamp("check_out");
+                col[4] = rs.getInt("deposit");
+                switch (rs.getInt("bstatus")) {
                     case 0:
                         col[5] = "Chưa cọc";
                         break;
@@ -232,7 +218,7 @@ public class CheckInBLL {
             pos = 0;
             ResultSet rs = orderDAO.getOrder();
             while (rs.next()) {
-                if (rs.getInt("madatphong") == madatphong) {
+                if (rs.getInt("bid") == madatphong) {
                     return pos;
                 } else {
                     pos++;

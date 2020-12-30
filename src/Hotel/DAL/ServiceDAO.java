@@ -5,10 +5,10 @@
  */
 package Hotel.DAL;
 
-import Hotel.DTO.Dichvu;
-import Hotel.DTO.Dichvuphong;
+import Hotel.DTO.services.RoomService;
+import Hotel.DTO.services.Service;
+
 import java.sql.*;
-import java.util.ArrayList;
 
 /**
  *
@@ -30,56 +30,54 @@ public class ServiceDAO {
         return instance;
     }
 
-    public ResultSet getDichvu() throws SQLException {
-        String sql = "Select * from dichvu";
+    public ResultSet getService() throws SQLException {
+        String sql = "Select * from service WHERE deleted = 0";
         PreparedStatement ps = DbConn.getConnection().prepareStatement(sql);
-        ResultSet rs = ps.executeQuery();
 
-        return rs;
+        return ps.executeQuery();
     }
 
-    public ResultSet getDichvuphong(int mathuephong$, int maphong$) throws SQLException {
-        String sql = " Select * from dichvuphong inner join dichvu on dichvuphong.madv = dichvu.madv "
-                + "where mathuephong  = ? and maphong = ? order by ngaydung asc";
+    public ResultSet getRoomService(int bid$, int rid$) throws SQLException {
+        String sql = " Select * from booking_service inner join service on booking_service.sid = service.sid "
+                + "where bid  = ? and rid = ? order by bstime";
         PreparedStatement ps = DbConn.getConnection().prepareStatement(sql);
-        ps.setInt(1, mathuephong$);
-        ps.setInt(2, maphong$);
-        ResultSet rs = ps.executeQuery();
+        ps.setInt(1, bid$);
+        ps.setInt(2, rid$);
 
-        return rs;
+        return ps.executeQuery();
     }
 
-    public void addRoomService(Dichvuphong[] dichvuphong) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("INSERT INTO dichvuphong "
-                + "VALUES (?, ?, ?, ? ,? ,?)");
-        for (Dichvuphong i : dichvuphong) {
-            ps.setInt(1, i.getMathuephong());
-            ps.setInt(2, i.getMadv());
-            ps.setInt(3, i.getDongia());
-            ps.setTimestamp(4, i.getNgaydung());
-            ps.setInt(5, i.getMaphong());
-            ps.setInt(6, i.getSoluong());
+    public void addRoomService(RoomService[] roomService) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("INSERT INTO booking_service" +
+                "(sid, bid, rid, bsprice, quantity) "
+                + "VALUES (?, ?, ?, ? ,?)");
+        for (RoomService i : roomService) {
+            ps.setInt(1, i.getServiceId());
+            ps.setInt(2, i.getBookingId());
+            ps.setInt(3, i.getRoomId());
+            ps.setInt(4, i.getPrice());
+            ps.setInt(5, i.getQuantity());
             ps.addBatch();
         }
         ps.executeBatch();
         ps.close();
     }
 
-    public void updateRoomService(Dichvuphong dichvuphong) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("UPDATE dichvuphong "
-                + "SET soluong = ? WHERE mathuephong = ? AND madv = ? AND ngaydung = ?");
-        ps.setInt(1, dichvuphong.getSoluong());
-        ps.setInt(2, dichvuphong.getMathuephong());
-        ps.setInt(3, dichvuphong.getMadv());
-        ps.setTimestamp(4, dichvuphong.getNgaydung());
+    public void updateRoomService(RoomService roomService) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("UPDATE booking_service "
+                + "SET quantity = ? WHERE bid = ? AND sid = ? AND bstime = ?");
+        ps.setInt(1, roomService.getQuantity());
+        ps.setInt(2, roomService.getBookingId());
+        ps.setInt(3, roomService.getServiceId());
+        ps.setTimestamp(4, roomService.getUseTime());
         ps.executeUpdate();
         ps.close();
     }
 
     public int getServiceIdByName(String serviceName) throws SQLException {
         int serviceId = 0;
-        PreparedStatement ps = conn.prepareStatement("SELECT madv FROM dichvu "
-                + "WHERE tendv = ?");
+        PreparedStatement ps = conn.prepareStatement("SELECT sid FROM service "
+                + "WHERE sname = ?");
         ps.setString(1, serviceName);
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
@@ -90,48 +88,50 @@ public class ServiceDAO {
         return serviceId;
     }
 
-    public void deleteRoomService(Dichvuphong dichvuphong) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("DELETE FROM dichvuphong "
-                + "WHERE mathuephong = ? AND madv = ? AND ngaydung = ?");
-        ps.setInt(1, dichvuphong.getMathuephong());
-        ps.setInt(2, dichvuphong.getMadv());
-        ps.setTimestamp(3, dichvuphong.getNgaydung());
+    public void deleteRoomService(int id) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM booking_service "
+                + "WHERE bsid = ?");
+        ps.setInt(1, id);
         ps.executeUpdate();
         ps.close();
     }
 
-    public void addServiceeeeee(Dichvu dichvu) throws SQLException {
-        //String sql = "INSERT INTO dichvu VALUES (?,?,?);";
-        String sql = "INSERT INTO hotel_oop.dichvu (tendv, dvtinh, dongia) VALUES (?, ?, ?)";
+    public void addServiceeeeee(Service service) throws SQLException {
+        //String sql = "INSERT INTO service VALUES (?,?,?);";
+        String sql = "INSERT INTO service (sname, sunit, sprice) VALUES (?, ?, ?)";
         PreparedStatement ps = DbConn.getConnection().prepareStatement(sql);
-        ps.setString(1, dichvu.getTendv());
-        ps.setString(2, dichvu.getDvtinh());
-        ps.setInt(3, dichvu.getDongia());
+        ps.setString(1, service.getName());
+        ps.setString(2, service.getUnit());
+        ps.setInt(3, service.getPrice());
         ps.executeUpdate();
         ps.close();
     }
 
-    public void deleteService(int madv) throws SQLException {
-        String sql = "DELETE FROM dichvu WHERE madv = ? ";
+    public void deleteService(int sid) throws SQLException {
+        String sql = "DELETE FROM service WHERE sid = ? ";
         PreparedStatement ps = DbConn.getConnection().prepareStatement(sql);
-        ps.setInt(1, madv);
+        ps.setInt(1, sid);
         ps.executeUpdate();
         ps.close();
     }
 
-    public void updateService(Dichvu dichvu) throws SQLException {
-        String sql = "UPDATE dichvu set tendv = ?, dvtinh = ?, dongia = ? "
-                + "WHERE madv = ?";
+    public void updateService(Service service) throws SQLException {
+        String sql = "UPDATE service set sname = ?, sunit = ?, sprice = ? "
+                + "WHERE sid = ?";
         PreparedStatement ps = DbConn.getConnection().prepareStatement(sql);
-        ps.setString(1, dichvu.getTendv());
-        ps.setString(2, dichvu.getDvtinh());
-        ps.setInt(3, dichvu.getDongia());
-        ps.setInt(4, dichvu.getMadv());
+        ps.setString(1, service.getName());
+        ps.setString(2, service.getUnit());
+        ps.setInt(3, service.getPrice());
+        ps.setInt(4, service.getId());
         ps.executeUpdate();
         ps.close();
     }
 
-    public void deleteService(String madichvu) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean deleteService(String sid) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("UPDATE service " +
+                "SET deleted = 1 WHERE sid = ?");
+        int success = ps.executeUpdate();
+
+        return success == 1;
     }
 }

@@ -1,6 +1,6 @@
 package Hotel.GUI.ManagementGUI;
 
-import Hotel.DTO.Room.RoomForManaging;
+import Hotel.DTO.rooms.RoomForManaging;
 import Hotel.BLL.ManagementBLL;
 import Hotel.BLL.Rules;
 import java.awt.Color;
@@ -8,6 +8,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -28,10 +30,15 @@ public class RoomButton extends JButton {
     private static final JMenuItem deleteRoom = new JMenuItem("Xóa phòng");
     private static final JMenuItem goToProfile = new JMenuItem("Tới hồ sơ");
     private static final JMenuItem goToService = new JMenuItem("Dịch vụ phòng");
-    private static final JMenuItem openOrder = new JMenuItem("Mở đặt phòng");
-    private static final JMenuItem closeOrder = new JMenuItem("Đóng đặt phòng");
+    private static final JMenuItem openCloseOrder = new JMenuItem("Mở đặt phòng");
     private static RoomButton currentRoom;
     private static ManagementBLL managementBLL;
+
+    private static RoomClickListener listener;
+
+    public static void setListener(RoomClickListener listener) {
+        RoomButton.listener = listener;
+    }
 
     public void setTypePanel(RoomTypePanel typePanel) {
         this.typePanel = typePanel;
@@ -47,7 +54,7 @@ public class RoomButton extends JButton {
         popupMenu.addPopupMenuListener(new PopupMenuListener() {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                if (currentRoom.getRoom().getMahientai() == 0) {
+                if (currentRoom.getRoom().getCurrentBooking() == 0) {
                     popupMenu.add(updateRoom);
                     popupMenu.add(deleteRoom);
                 } else {
@@ -55,11 +62,7 @@ public class RoomButton extends JButton {
                     popupMenu.add(goToProfile);
                     popupMenu.add(updateRoom);
                 }
-                if (currentRoom.getRoom().isAvailable()) {
-                    popupMenu.add(closeOrder);
-                } else {
-                    popupMenu.add(openOrder);
-                }
+                popupMenu.add(openCloseOrder);
             }
 
             @Override
@@ -95,26 +98,18 @@ public class RoomButton extends JButton {
         goToProfile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                managementBLL.goToProfile(currentRoom.getRoom().getMahientai());
+                managementBLL.goToProfile(currentRoom.getRoom().getCurrentBooking());
             }
         });
 
-        openOrder.addActionListener(new ActionListener() {
+        openCloseOrder.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentRoom.getRoom().setAvailable(true);
+                currentRoom.getRoom().setAvailable(!currentRoom.getRoom().isAvailable());
                 managementBLL.changeStateRoom(currentRoom.getRoom());
-                currentRoom.setAvalable();
-                Rules.StateIsChanged = true;
-            }
-        });
-
-        closeOrder.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                currentRoom.getRoom().setAvailable(false);
-                managementBLL.changeStateRoom(currentRoom.getRoom());
-                currentRoom.setAvalable();
+                currentRoom.setAvailable();
+                openCloseOrder.setText(currentRoom.getRoom().isAvailable()
+                        ? "Đóng đặt phòng" : "Mở đặt phòng");
                 Rules.StateIsChanged = true;
             }
         });
@@ -122,8 +117,8 @@ public class RoomButton extends JButton {
         goToService.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Hotel.GUI.ServiceGUI.RoomServiceForm(currentRoom.getRoom().getMaphong(),
-                        currentRoom.getRoom().getMahientai()).setVisible(true);
+                new Hotel.GUI.ServiceGUI.RoomServiceForm(currentRoom.getRoom().getId(),
+                        currentRoom.getRoom().getCurrentBooking()).setVisible(true);
             }
         });
     }
@@ -136,30 +131,70 @@ public class RoomButton extends JButton {
         return room;
     }
 
+    public static RoomForManaging getCurrentRoom() {
+        return currentRoom.getRoom();
+    }
+
     public RoomButton(RoomForManaging room) {
         super();
         this.room = room;
         this.setPreferredSize(new Dimension(100, 100));
-        setAvalable();
-        this.addActionListener((ActionEvent e) -> {
-            currentRoom = this;
-            Point p = this.getMousePosition();
-            popupMenu.show(this, p.x, p.y);
+        setAvailable();
+        this.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                currentRoom = RoomButton.this;
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    RoomButton.listener.onRoomClick(currentRoom);
+                } else if (e.getButton() == MouseEvent.BUTTON3) {
+                    Point p = RoomButton.this.getMousePosition();
+                    popupMenu.show(RoomButton.this, p.x, p.y);
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
         });
     }
 
-    public void setAvalable() {
-        if (room.getMahientai() == 0) {
-            this.setText(room.getTenphong());
+    public void setAvailable() {
+        if (room.getCurrentBooking() == 0) {
+            this.setText(room.getName());
             this.setBackground(DEFAULT_COLOR);
         } else {
             this.setText("<html><p style='text-align:center'>"
-                    + room.getTenphong() + "<br/>#"
-                    + String.format("%07d", room.getMahientai()));
+                    + room.getName() + "<br/>#"
+                    + String.format("%07d", room.getCurrentBooking()));
             this.setBackground(STAYED_COLOR);
         }
         if (!room.isAvailable()) {
             this.setBackground(UNAVALABLE_COLOR);
         }
+    }
+
+    public interface RoomClickListener {
+
+        void onRoomClick(RoomButton room);
+    }
+
+    public static void goToBooking() {
+        goToProfile.doClick();
     }
 }

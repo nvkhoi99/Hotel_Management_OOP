@@ -90,7 +90,7 @@ public class ServiceForm extends javax.swing.JPanel {
         jPanel2.add(txtTenDichvu, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipadx = 100;
         gridBagConstraints.weightx = 0.5;
@@ -99,7 +99,7 @@ public class ServiceForm extends javax.swing.JPanel {
         jPanel2.add(txtDonviTinh, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipadx = 100;
         gridBagConstraints.ipady = 5;
@@ -306,6 +306,7 @@ public class ServiceForm extends javax.swing.JPanel {
                 } else {
                     service.AddService(txtTenDichvu.getText(), txtDonviTinh.getText(), txtDongia.getText());
                     service.initServiceList((DefaultTableModel) tblService.getModel());
+                    ServiceSubForm.setVisible(false);
                 }
             } else if (bien == 2) { // sua
                 int x = JOptionPane.showConfirmDialog(null, " Có chắc bạn muốn sửa như thê này ko ?! ", "A great man one said : ", JOptionPane.YES_NO_OPTION);
@@ -318,6 +319,7 @@ public class ServiceForm extends javax.swing.JPanel {
                                 txtDonviTinh.getText(),
                                 txtDongia.getText());
                         service.initServiceList((DefaultTableModel) tblService.getModel());
+                        ServiceSubForm.setVisible(false);
                     }
                 }
             }

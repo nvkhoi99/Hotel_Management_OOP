@@ -44,10 +44,10 @@ public class PayDialog extends javax.swing.JDialog {
 
     private void initBill() {
         mathuephong.setText(String.valueOf(profile.getMathuephong()));
-        makh.setText(String.valueOf(profile.getDondatphong().getMakh()));
-        hotenkh.setText(customer.getHotenkh());
-        ngaynhan.setText(profile.getDondatphong().getNgaynhan().toString());
-        ngaytra.setText(profile.getDondatphong().getNgaytra().toString());
+        makh.setText(String.valueOf(profile.getDondatphong().getId()));
+        hotenkh.setText(customer.getFullname());
+        ngaynhan.setText(profile.getDondatphong().getCheckInTime().toString());
+        ngaytra.setText(profile.getDondatphong().getCheckOutTime().toString());
         thucnhan.setText(profile.getThucnhan().toString());
         Timestamp checkOutTime = new Timestamp(System.currentTimeMillis());
         checkOutTime.setNanos(0);
@@ -82,9 +82,9 @@ public class PayDialog extends javax.swing.JDialog {
                 + (tra_muon.isSelected() ? lately_checkOut : 0);
         phuthu.setText(formatter.format(surchage));
 
-        tongcoc.setText(formatter.format(profile.getDondatphong().getTongcoc()));
+        tongcoc.setText(formatter.format(profile.getDondatphong().getDeposit()));
 
-        sumBill = sum_room + sum_service - profile.getDondatphong().getTongcoc() + surchage;
+        sumBill = sum_room + sum_service - profile.getDondatphong().getDeposit() + surchage;
         tongthanhtoan.setText(formatter.format(sumBill));
 
     }

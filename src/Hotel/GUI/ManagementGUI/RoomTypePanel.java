@@ -2,9 +2,9 @@ package Hotel.GUI.ManagementGUI;
 
 import Hotel.DTO.RoomType;
 import Hotel.BLL.ManagementBLL;
-import Hotel.BLL.OrderBLL;
+import Hotel.BLL.BookingBLL;
 import Hotel.BLL.Rules;
-import Hotel.GUI.OrderGUI.RoomToggle;
+import Hotel.GUI.BookingGUI.RoomToggle;
 import java.awt.CardLayout;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class RoomTypePanel extends javax.swing.JPanel {
 
     private final RoomType roomType;
     private static ManagementBLL managementBLL;
-    private static OrderBLL orderBLL;
+    private static BookingBLL bookingBLL;
     private static final DecimalFormat df = new DecimalFormat("#,##0 VNĐ");
     private static ArrayList<String> typeNameList;
     private static RoomTypePanel currentType;
@@ -31,8 +31,8 @@ public class RoomTypePanel extends javax.swing.JPanel {
         RoomTypePanel.managementBLL = managementBLL;
     }
 
-    public static void setOrderBLL(OrderBLL orderBLL) {
-        RoomTypePanel.orderBLL = orderBLL;
+    public static void setBookingBLL(BookingBLL bookingBLL) {
+        RoomTypePanel.bookingBLL = bookingBLL;
     }
 
     public int getChoose() {
@@ -40,7 +40,7 @@ public class RoomTypePanel extends javax.swing.JPanel {
     }
 
     public int getPrice() {
-        return this.roomType.getDongia();
+        return this.roomType.getPrice();
     }
 
     public static void setTypeNameList(ArrayList<String> nameList) {
@@ -60,8 +60,8 @@ public class RoomTypePanel extends javax.swing.JPanel {
     }
 
     private void initRoomType() {
-        roomTypeName.setText(roomType.getTenloaiphong());
-        price.setText("Đơn giá: " + df.format(roomType.getDongia()) + " ");
+        roomTypeName.setText(roomType.getName());
+        price.setText("Đơn giá: " + df.format(roomType.getPrice()) + " ");
     }
 
     public void addRoom(RoomButton room) {
@@ -86,12 +86,12 @@ public class RoomTypePanel extends javax.swing.JPanel {
 
     public void increase() {
         amount.setText(String.valueOf(++choose));
-        orderBLL.updateDeposit();
+        bookingBLL.updateDeposit();
     }
 
     public void decrease() {
         amount.setText(String.valueOf(--choose));
-        orderBLL.updateDeposit();
+        bookingBLL.updateDeposit();
     }
 
     public void setUpdate(String newName, String newPrice) {
@@ -302,8 +302,8 @@ public class RoomTypePanel extends javax.swing.JPanel {
     private void updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateActionPerformed
         updateTypeDialog.setLocationRelativeTo(this.update);
         currentType = this;
-        newTypeName.setText(this.roomType.getTenloaiphong());
-        newTypePrice.setText(String.valueOf(this.roomType.getDongia()));
+        newTypeName.setText(this.roomType.getName());
+        newTypePrice.setText(String.valueOf(this.roomType.getPrice()));
         updateTypeDialog.setVisible(true);
     }//GEN-LAST:event_updateActionPerformed
 
@@ -311,7 +311,7 @@ public class RoomTypePanel extends javax.swing.JPanel {
         String newName = JOptionPane.showInputDialog(this, "Nhập tên phòng mới: ",
                 this.roomTypeName.getText(), JOptionPane.PLAIN_MESSAGE);
         if (newName != null) {
-            if (managementBLL.addNewRoom(roomType.getMaloaiphong(), newName)) {
+            if (managementBLL.addNewRoom(roomType.getId(), newName)) {
                 JOptionPane.showMessageDialog(null, "Thêm phòng " + newName + " thành công");
                 Rules.StateIsChanged = true;
             }
@@ -320,18 +320,18 @@ public class RoomTypePanel extends javax.swing.JPanel {
 
     private void updateTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateTypeActionPerformed
         RoomType rt = new RoomType();
-        rt.setMaloaiphong(currentType.getRoomType().getMaloaiphong());
-        rt.setTenloaiphong(newTypeName.getText());
+        rt.setId(currentType.getRoomType().getId());
+        rt.setName(newTypeName.getText());
         try {
-            rt.setDongia(Integer.valueOf(newTypePrice.getText()));
+            rt.setPrice(Integer.valueOf(newTypePrice.getText()));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Đơn giá không hợp lệ");
             return;
         }
         if (managementBLL.updateRoomType(rt)) {
             JOptionPane.showMessageDialog(null, "Cập nhật thành công");
-            currentType.getRoomType().setTenloaiphong(roomTypeName.getText());
-            currentType.getRoomType().setDongia(Integer.valueOf(newTypePrice.getText()));
+            currentType.getRoomType().setName(roomTypeName.getText());
+            currentType.getRoomType().setPrice(Integer.valueOf(newTypePrice.getText()));
             currentType.setUpdate(newTypeName.getText(), newTypePrice.getText());
             Rules.StateIsChanged = true;
             updateTypeDialog.setVisible(false);

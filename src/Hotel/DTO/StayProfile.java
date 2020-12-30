@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 public class StayProfile {
 
     private int mathuephong;
-    private Order dondatphong;
+    private Booking dondatphong;
     private Timestamp thucnhan;
     private Timestamp thuctra;
     private long tongthanhtoan;
@@ -22,7 +22,7 @@ public class StayProfile {
     public StayProfile() {
     }
 
-    public StayProfile(int mathuephong, Order dondatphong, Timestamp thucnhan, Timestamp thuctra, long tongthanhtoan) {
+    public StayProfile(int mathuephong, Booking dondatphong, Timestamp thucnhan, Timestamp thuctra, long tongthanhtoan) {
         this.mathuephong = mathuephong;
         this.dondatphong = dondatphong;
         this.thucnhan = thucnhan;
@@ -38,11 +38,11 @@ public class StayProfile {
         this.mathuephong = mathuephong;
     }
 
-    public Order getDondatphong() {
+    public Booking getDondatphong() {
         return dondatphong;
     }
 
-    public void setDondatphong(Order dondatphong) {
+    public void setDondatphong(Booking dondatphong) {
         this.dondatphong = dondatphong;
     }
 

@@ -5,18 +5,25 @@
  */
 package Hotel.BLL;
 
-import Hotel.DTO.Order;
+import Hotel.DAL.BookingDao;
+import Hotel.DTO.Booking;
 import Hotel.DTO.StayProfile;
 import Hotel.DAL.OrderDAO;
 import Hotel.DAL.StayProfileDAO;
+import Hotel.DTO.rooms.Room;
 import Hotel.GUI.CheckOutGUI.CheckOutForm;
+import Hotel.GUI.common.BookingTableModel;
+
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.Timestamp;
-import javax.swing.JOptionPane;
+import java.util.stream.Collectors;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -24,11 +31,13 @@ import javax.swing.JOptionPane;
  */
 public class CheckOutBLL {
 
-    private final CheckOutForm checkOutForm;
+    private final JPanel checkOutForm;
     private final StayProfileDAO stayProfileDAO = StayProfileDAO.getInstance();
     private int pos = 0;
 
-    public CheckOutBLL(CheckOutForm checkOutForm) {
+    private BookingDao bookingDao = new BookingDao();
+
+    public CheckOutBLL(JPanel checkOutForm) {
         this.checkOutForm = checkOutForm;
     }
 
@@ -51,21 +60,21 @@ public class CheckOutBLL {
         }
     }
 
-    public Order getOrderInProfile(int orderId) {
-        Order order = new Order();
+    public Booking getOrderInProfile(int orderId) {
+        Booking booking = new Booking();
         try {
             ResultSet rs = OrderDAO.getInstance().getOrderById(orderId);
             if (rs.next()) {
-                order.setMadatphong(orderId);
-                order.setMakh(rs.getInt("makh"));
-                order.setNgaynhan(rs.getTimestamp("ngaynhan"));
-                order.setNgaytra(rs.getTimestamp("ngaytra"));
-                order.setTongcoc(rs.getInt("tongcoc"));
+                booking.setId(orderId);
+                booking.setCustomerId(rs.getInt("makh"));
+                booking.setCheckInTime(rs.getTimestamp("ngaynhan"));
+                booking.setCheckOutTime(rs.getTimestamp("ngaytra"));
+                booking.setDeposit(rs.getInt("tongcoc"));
             }
         } catch (SQLException ex) {
             Logger.getLogger(CheckOutBLL.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return order;
+        return booking;
     }
 
     public StayProfile getProfileById(int stayId) {
@@ -88,7 +97,7 @@ public class CheckOutBLL {
 
     public void initStayTable(StayProfile profile, DefaultTableModel model) {
         try {
-            ResultSet rs = OrderDAO.getInstance().getRoomInOrder(profile.getDondatphong().getMadatphong());
+            ResultSet rs = OrderDAO.getInstance().getRoomInOrder(profile.getDondatphong().getId());
             long so_dem_o = calculateStayTime(profile.getThucnhan(), profile.getThuctra());
             while (rs.next()) {
                 model.addRow(new Object[]{
@@ -135,20 +144,25 @@ public class CheckOutBLL {
     }
 
     public int[] calculateSurcharge(Timestamp realIn, Timestamp realOut, int price) {
-        int[] surcharge = new int[2];
+        int[] surcharge = new int[]{calculateEarlyCheckIn(realIn, price),
+            calculateLatelyCheckOut(realOut, price)};
+        return surcharge;
+    }
+
+    public int calculateEarlyCheckIn(Timestamp realIn, int price) {
         if (realIn.getHours() >= Rules.MAX_EARLY_CHECK_IN_HOUR
                 && realIn.getHours() < Rules.STANDARD_CHECK_IN_HOUR) {
-            surcharge[0] = price * Rules.SURCHARGE_EARLY_PERCENT / 100;
-        } else {
-            surcharge[0] = 0;
+            return price * Rules.SURCHARGE_EARLY_PERCENT / 100;
         }
+        return 0;
+    }
+
+    public int calculateLatelyCheckOut(Timestamp realOut, int price) {
         if (realOut.getHours() >= Rules.STANDARD_CHECK_OUT_HOUR
                 && realOut.getHours() < Rules.MAX_LATELY_CHECK_OUT_HOUR) {
-            surcharge[1] = price * Rules.SURCHARGE_LATELY_PERCENT / 100;
-        } else {
-            surcharge[1] = 0;
+            return price * Rules.SURCHARGE_LATELY_PERCENT / 100;
         }
-        return surcharge;
+        return 0;
     }
 
     public boolean completeProfile(StayProfile stayProfile) {
@@ -182,6 +196,16 @@ public class CheckOutBLL {
             rs.getStatement().close();
         } catch (SQLException ex) {
             Logger.getLogger(CheckOutBLL.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public TableModel getBookingsByPage(int page) {
+        try {
+            ArrayList<Booking> bookings = bookingDao.getCheckedInBookingByPage(page);
+            return new BookingTableModel(bookings);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

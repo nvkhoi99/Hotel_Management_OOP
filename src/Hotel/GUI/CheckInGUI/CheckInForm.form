@@ -557,31 +557,10 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JLabel" name="jLabel3">
-          <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Arial" size="18" style="3"/>
-            </Property>
-            <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/Hotel/GUI/Z_Icons/1464860040-img20160416013819971-xahoi.com.vn-1465003981.jpg"/>
-            </Property>
-            <Property name="horizontalTextPosition" type="int" value="10"/>
-            <Property name="opaque" type="boolean" value="true"/>
-            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[200, 100]"/>
-            </Property>
-          </Properties>
-          <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-              <BorderConstraints direction="First"/>
-            </Constraint>
-          </Constraints>
-        </Component>
         <Container class="javax.swing.JPanel" name="buttons">
           <Properties>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[300, 50]"/>
+              <Dimension value="[300, 120]"/>
             </Property>
           </Properties>
           <Constraints>
@@ -591,10 +570,15 @@
           </Constraints>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
-            <Property name="columns" type="int" value="0"/>
-            <Property name="rows" type="int" value="1"/>
+            <Property name="columns" type="int" value="1"/>
+            <Property name="rows" type="int" value="0"/>
           </Layout>
           <SubComponents>
+            <Component class="javax.swing.JButton" name="btnEditBookingRoom">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="S&#x1eed;a th&#xf4;ng tin"/>
+              </Properties>
+            </Component>
             <Component class="javax.swing.JButton" name="huyphong">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
