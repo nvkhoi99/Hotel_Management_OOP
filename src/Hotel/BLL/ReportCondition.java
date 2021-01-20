@@ -16,29 +16,38 @@ import java.util.logging.Logger;
  *
  * @author Yue
  */
-public class ReportDates {
+public class ReportCondition {
 
     private Date from;
     private Date to;
+    private String addIn;
 
-    public ReportDates(String from, String to) {
+    public ReportCondition(String from, String to) {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             this.from = new Date(formatter.parse(from).getTime());
             this.to = new Date(formatter.parse(to).getTime() + 1000 * 60 * 60 * 24);
         } catch (ParseException ex) {
-            Logger.getLogger(ReportDates.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ReportCondition.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public ReportDates(String pattern) {
+    public void setAddIn(String addIn) {
+        this.addIn = addIn;
+    }
+
+    public String getAddIn() {
+        return addIn;
+    }
+
+    public ReportCondition(String pattern) {
         Calendar calendar = Calendar.getInstance();
         if (pattern.length() == 4) {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy");
             try {
                 calendar.setTime(formatter.parse(pattern));
             } catch (ParseException ex) {
-                Logger.getLogger(ReportDates.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ReportCondition.class.getName()).log(Level.SEVERE, null, ex);
             }
             from = new Date(calendar.getTime().getTime());
             calendar.add(Calendar.YEAR, 1);
@@ -48,7 +57,7 @@ public class ReportDates {
             try {
                 calendar.setTime(formatter.parse(pattern));
             } catch (ParseException ex) {
-                Logger.getLogger(ReportDates.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ReportCondition.class.getName()).log(Level.SEVERE, null, ex);
             }
             from = new Date(calendar.getTime().getTime());
             calendar.add(Calendar.MONTH, 1);

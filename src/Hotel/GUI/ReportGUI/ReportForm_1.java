@@ -2,7 +2,7 @@ package Hotel.GUI.ReportGUI;
 
 import Hotel.DAL.ReportDAL.ReportType;
 import Hotel.BLL.ReportBLL;
-import Hotel.BLL.ReportDates;
+import Hotel.BLL.ReportCondition;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -256,22 +256,22 @@ public class ReportForm_1 extends JPanel {
 
     private void thongkeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thongkeBtnActionPerformed
         ReportType reportType = ReportType.SerialOf(loaibaocao.getSelectedIndex());
-        ReportDates reportDates;
+        ReportCondition reportCondition;
         if (thoi_gian.isSelected(moc.getModel())) {
-            reportDates = new ReportDates(timeline.getSelectedItem().toString());
+            reportCondition = new ReportCondition(timeline.getSelectedItem().toString());
         } else /*if (thoi_gian.isSelected(khoang.getModel()))*/ {
-            reportDates = new ReportDates(tungay.getText(), denngay.getText());
+            reportCondition = new ReportCondition(tungay.getText(), denngay.getText());
         }
         switch (reportType) {
             case DOANH_SO_DAT_PHONG:
-                bangthongke.setModel(reportBLL.getReport_ORDER_STATISTIC(reportDates));
+                bangthongke.setModel(reportBLL.getReport_ORDER_STATISTIC(reportCondition));
                 break;
             case DOANH_THU_PHONG:
-                bangthongke.setModel(reportBLL.getReport_STAY_STATISTIC(reportDates));
+                bangthongke.setModel(reportBLL.getReport_STAY_STATISTIC(reportCondition));
                 break;
             case DOANH_THU_DICH_VU:
-                bangthongke.setModel(reportBLL.getReport_SERVICE_STATISTIC(reportDates,
-                        serviceName.getSelectedIndex() == 0 ? null : serviceName.getSelectedItem().toString()));
+                if (serviceName.getSelectedIndex() != 0) reportCondition.setAddIn(serviceName.getSelectedItem().toString());
+                bangthongke.setModel(reportBLL.getReport_SERVICE_STATISTIC(reportCondition));
                 break;
         }
         CellRenderer cellRenderer = new CellRenderer();

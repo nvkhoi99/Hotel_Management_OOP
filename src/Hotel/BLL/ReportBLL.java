@@ -11,13 +11,10 @@ import Hotel.DAL.ServiceDAO;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
-import java.sql.Timestamp;
-import java.text.ParseException;
 import javax.swing.JTable;
 
 /**
@@ -47,18 +44,18 @@ public class ReportBLL {
             comboBox.addItem("Tất cả");
             ResultSet rs = ServiceDAO.getInstance().getService();
             while (rs.next()) {
-                comboBox.addItem(rs.getString("tendv"));
+                comboBox.addItem(rs.getString("sname"));
             }
         } catch (SQLException ex) {
             Logger.getLogger(ReportBLL.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public DefaultTableModel getReport_ORDER_STATISTIC(ReportDates reportDates) {
+    public DefaultTableModel getReport_ORDER_STATISTIC(ReportCondition reportCondition) {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(ReportType.DOANH_SO_DAT_PHONG.getColumnHeader());
         try {
-            ResultSet rs = reportDAO.getReport(ReportType.DOANH_SO_DAT_PHONG, reportDates);
+            ResultSet rs = reportDAO.getReport(ReportType.DOANH_SO_DAT_PHONG, reportCondition);
             java.sql.Date dupe = null;
             int count = 0;
             int roomCount = 0;
@@ -104,11 +101,11 @@ public class ReportBLL {
         return model;
     }
 
-    public DefaultTableModel getReport_STAY_STATISTIC(ReportDates reportDates) {
+    public DefaultTableModel getReport_STAY_STATISTIC(ReportCondition reportCondition) {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(ReportType.DOANH_THU_PHONG.getColumnHeader());
         try {
-            ResultSet rs = reportDAO.getReport(ReportType.DOANH_THU_PHONG, reportDates);
+            ResultSet rs = reportDAO.getReport(ReportType.DOANH_THU_PHONG, reportCondition);
             java.sql.Date dupe = null;
             int count = 0;
             int roomCount = 0;
@@ -154,17 +151,12 @@ public class ReportBLL {
         return model;
     }
 
-    public DefaultTableModel getReport_SERVICE_STATISTIC(ReportDates reportDates, String serviceName) {
+    public DefaultTableModel getReport_SERVICE_STATISTIC(ReportCondition reportCondition) {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(ReportType.DOANH_THU_DICH_VU.getColumnHeader());
         ResultSet rs;
         try {
-            if (serviceName == null) {
-                rs = reportDAO.getReport(ReportType.DOANH_THU_DICH_VU, reportDates);
-            } else {
-                String condition = "having tendv = '" + serviceName + "' ";
-                rs = reportDAO.getReportAddingCondition(ReportType.DOANH_THU_DICH_VU, reportDates, condition);
-            }
+            rs = reportDAO.getReport(ReportType.DOANH_THU_DICH_VU, reportCondition);
             String dupe = null;
             int count = 0;
             long money = 0;

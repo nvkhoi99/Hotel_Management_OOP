@@ -42,22 +42,11 @@ public enum ReportType {
     public String getSQL() {
         switch (this) {
             case DOANH_SO_DAT_PHONG:
-                return "select convert(ngaydat, date) as ngay_dat, dondatphong.madatphong, "
-                        + "count(maphong) as so_phong_dat,tongcoc "
-                        + "from dondatphong inner join chitietdatphong on dondatphong.madatphong = chitietdatphong.madatphong "
-                        + "where ngaydat between ? and ? "
-                        + "group by convert(ngaydat, date), dondatphong.madatphong ";
+                return "{call spReportBookingTurnover(?, ?)}";
             case DOANH_THU_PHONG:
-                return "SELECT convert(thuctra, date) as ngay, mathuephong, count(maphong) as so_phong_o, tongthanhtoan "
-                        + "from hosothuephong inner join dondatphong on hosothuephong.madatphong = dondatphong.madatphong "
-                        + "inner join chitietdatphong on dondatphong.madatphong = chitietdatphong.madatphong "
-                        + "where thuctra between ? and ? "
-                        + "group by convert(thuctra, date), mathuephong, tongthanhtoan ";
+                return "{call spReportBookingRevenue(?, ?)}";
             case DOANH_THU_DICH_VU:
-                return "select tendv, convert(ngaydung,date), sum(soluong), dichvuphong.dongia, sum(soluong * dichvuphong.dongia) as thanhtien "
-                        + "from dichvuphong inner join dichvu on dichvuphong.madv = dichvu.madv "
-                        + "where ngaydung between ? and ? "
-                        + "group by tendv, convert(ngaydung,date)";
+                return "{call spReportServiceRevenue(?, ?, ?)}";
         }
         return null;
     }
@@ -65,7 +54,7 @@ public enum ReportType {
     public Object[] getColumnHeader() {
         switch (this) {
             case DOANH_SO_DAT_PHONG:
-                return new Object[]{"Ngày đặt", "Mã Đặt Phòng", "Số lượng phòng", "Tổng cọc"};
+                return new Object[]{"Ngày đặt", "Mã đơn", "Số lượng phòng", "Tổng cọc"};
             case DOANH_THU_PHONG:
                 return new Object[]{"Ngày", "Mã thuê phòng", " Số lượng phòng", " Tổng thanh toán"};
             case DOANH_THU_DICH_VU:

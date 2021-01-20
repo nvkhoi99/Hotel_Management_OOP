@@ -5,7 +5,7 @@
  */
 package Hotel.DAL.ReportDAL;
 
-import Hotel.BLL.ReportDates;
+import Hotel.BLL.ReportCondition;
 import Hotel.DAL.DbConn;
 import java.sql.*;
 
@@ -36,19 +36,21 @@ public class ReportDAO {
         } else {
             switch (reportType) {
                 case DOANH_SO_DAT_PHONG:
-                    sql = "SELECT date_format(convert(ngaydat, DATE),?) as thang "
-                            + "FROM dondatphong group by date_format(convert(ngaydat, DATE),?) "
-                            + "ORDER BY ngaydat DESC";
+                    sql = "SELECT date_format(convert(btime, DATE), ?) as thang "
+                            + "FROM booking group by date_format(convert(btime, DATE),?) "
+                            + "ORDER BY btime DESC";
                     break;
                 case DOANH_THU_PHONG:
-                    sql = "SELECT date_format(convert(thuctra, DATE),?) as thang "
-                            + "FROM hosothuephong group by date_format(convert(thuctra, DATE),?) "
-                            + "ORDER BY thuctra DESC";
+                    sql = "SELECT date_format(convert(paytime, DATE), ?) as thang "
+                            + "FROM booking "
+                            + "WHERE NOT isnull(paytime) "
+                            + "GROUP BY date_format(convert(paytime, DATE),?) "
+                            + "ORDER BY paytime DESC";
                     break;
                 case DOANH_THU_DICH_VU:
-                    sql = "SELECT date_format(convert(ngaydung, DATE),?) as thang "
-                            + "FROM dichvuphong group by date_format(convert(ngaydung, DATE),?) "
-                            + "ORDER BY ngaydung DESC";
+                    sql = "SELECT date_format(convert(bstime, DATE), ?) as thang "
+                            + "FROM booking_service group by date_format(convert(bstime, DATE),?) "
+                            + "ORDER BY bstime DESC";
             }
         }
         PreparedStatement ps = conn.prepareStatement(sql);
@@ -59,21 +61,24 @@ public class ReportDAO {
         return rs;
     }
 
-    public ResultSet getReport(ReportType reportType, ReportDates reportDates) throws SQLException {
+    public ResultSet getReport(ReportType reportType, ReportCondition reportCondition) throws SQLException {
         PreparedStatement ps = conn.prepareStatement(reportType.getSQL());
-        ps.setDate(1, reportDates.getFrom());
-        ps.setDate(2, reportDates.getTo());
+        ps.setDate(1, reportCondition.getFrom());
+        ps.setDate(2, reportCondition.getTo());
+        if (reportType == ReportType.DOANH_THU_DICH_VU) {
+            ps.setString(3, reportCondition.getAddIn());
+        }
         ResultSet rs = ps.executeQuery();
 
         return rs;
     }
 
-    public ResultSet getReportAddingCondition(ReportType reportType, ReportDates reportDates, String condition)
+    public ResultSet getReportAddingCondition(ReportType reportType, ReportCondition reportCondition, String condition)
             throws SQLException {
         String sql = reportType.getSQL().concat(condition);
         PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setDate(1, reportDates.getFrom());
-        ps.setDate(2, reportDates.getTo());
+        ps.setDate(1, reportCondition.getFrom());
+        ps.setDate(2, reportCondition.getTo());
         ResultSet rs = ps.executeQuery();
 
         return rs;

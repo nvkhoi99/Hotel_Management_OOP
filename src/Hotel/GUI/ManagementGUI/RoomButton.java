@@ -117,8 +117,8 @@ public class RoomButton extends JButton {
         goToService.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Hotel.GUI.ServiceGUI.RoomServiceForm(currentRoom.getRoom().getId(),
-                        currentRoom.getRoom().getCurrentBooking()).setVisible(true);
+                new Hotel.GUI.ServiceGUI.RoomServiceForm(currentRoom.getRoom().getCurrentBooking(),
+                        currentRoom.getRoom().getId()).setVisible(true);
             }
         });
     }
