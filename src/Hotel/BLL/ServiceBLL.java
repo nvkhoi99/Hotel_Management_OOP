@@ -153,7 +153,7 @@ public class ServiceBLL {
         } catch (HotelError ex) {
             ex.notifyError();
         } catch (SQLException ex) {
-            Logger.getLogger(ServiceBLL.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
 

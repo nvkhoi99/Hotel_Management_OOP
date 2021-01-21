@@ -97,13 +97,11 @@ public class ServiceDAO {
     }
 
     public void addServiceeeeee(Service service) throws SQLException {
-        //String sql = "INSERT INTO service VALUES (?,?,?);";
-        String sql = "INSERT INTO service (sname, sunit, sprice) VALUES (?, ?, ?)";
-        PreparedStatement ps = DbConn.getConnection().prepareStatement(sql);
+        CallableStatement ps = conn.prepareCall("{call spAddService(?, ?, ?)}");
         ps.setString(1, service.getName());
         ps.setString(2, service.getUnit());
         ps.setInt(3, service.getPrice());
-        ps.executeUpdate();
+        ps.execute();
         ps.close();
     }
 

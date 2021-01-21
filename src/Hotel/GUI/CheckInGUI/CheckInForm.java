@@ -539,7 +539,7 @@ public class CheckInForm extends javax.swing.JPanel implements DataChangeListene
     private void nextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nextMouseClicked
 
         if (nhoso >= 0 && nhoso < soMax - 1) {
-            nhoso += 50;
+            nhoso += 5;
             checkInBLL.updateTableTop((DefaultTableModel) orderList.getModel(), nhoso);
             previous.setVisible(true);
         }
@@ -551,7 +551,7 @@ public class CheckInForm extends javax.swing.JPanel implements DataChangeListene
 
     private void previousMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_previousMouseClicked
         if (nhoso > 0) {
-            nhoso -= 50;
+            nhoso -= 5;
             checkInBLL.updateTableTop((DefaultTableModel) orderList.getModel(), nhoso);
             next.setVisible(true);
         }

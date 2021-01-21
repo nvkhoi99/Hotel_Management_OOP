@@ -264,7 +264,7 @@ public class BookingBLL {
         return bookingId;
     }
 
-    public boolean checkOutRooms(List<Integer> bookingRoomIds) {
+    public boolean checkOutRooms(List<Integer> bookingRoomIds, boolean pay) {
         try {
             int surchargePercent = 0;
             int hour = Calendar.getInstance().getTime().getHours();
@@ -282,7 +282,7 @@ public class BookingBLL {
                         return false;
                 }
             }
-            bookingDao.checkOutRooms(bookingRoomIds, surchargePercent);
+            bookingDao.checkOutRooms(bookingRoomIds, surchargePercent, pay);
             return true;
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());

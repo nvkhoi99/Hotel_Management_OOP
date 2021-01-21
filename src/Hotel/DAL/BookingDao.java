@@ -239,20 +239,31 @@ public class BookingDao {
             conn.commit();
         } catch (SQLException ex) {
             conn.rollback();
+            throw ex;
         } finally {
             conn.setAutoCommit(true);
             ConnectionPool.releaseConnection(conn);
         }
     }
 
-    public void checkOutRooms(List<Integer> bookingRoomIds, int surchargePercent) throws SQLException {
+    public void checkOutRooms(List<Integer> bookingRoomIds, int surchargePercent, boolean pay) throws SQLException {
         Connection conn = ConnectionPool.getconnection();
-        PreparedStatement ps = conn.prepareStatement("UPDATE booking_room" +
-                " SET real_checkout = current_timestamp, surcharge = surcharge + rprice * ? / 100 WHERE brid = ?");
-        for (int id : bookingRoomIds) {
-            ps.setInt(1, surchargePercent);
-            ps.setInt(2, id);
-            ps.addBatch();
+        PreparedStatement ps;
+        if (pay) {
+            ps = conn.prepareStatement("UPDATE booking_room" +
+                    " SET real_checkout = current_timestamp, surcharge = surcharge + rprice * ? / 100 WHERE brid = ?");
+            for (int id : bookingRoomIds) {
+                ps.setInt(1, surchargePercent);
+                ps.setInt(2, id);
+                ps.addBatch();
+            }
+        } else {
+            ps = conn.prepareStatement("UPDATE booking_room" +
+                    " SET real_checkout = current_timestamp, rprice = 0 WHERE brid = ?");
+            for (int id : bookingRoomIds) {
+                ps.setInt(1, id);
+                ps.addBatch();
+            }
         }
         ps.executeBatch();
         ConnectionPool.releaseConnection(conn);
